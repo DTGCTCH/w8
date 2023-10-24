@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>함수 그래프</title>
+    <style>
+        body {
+            background: black;
+            margin: 0;
+        }
+
+        /* Canvas를 전체 화면으로 확장 */
+        canvas {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+        }
+
+        /* 슬라이더를 화면 중앙에 정렬 */
+        #scaleSlider {
+            position: absolute;
+            width: 99vw;
+            top: 90vh;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+        }
+
+        input[type=range] {
+          -webkit-appearance: none;
+          margin: 10px 0;
+          width: 100%;
+        }
+        input[type=range]:focus {
+          outline: none;
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+          width: 100%;
+          height: 30px;
+          cursor: pointer;
+          animate: 0.2s;
+          box-shadow: 0px 0px 0px #000000;
+          background: #000000;
+          border-radius: 0px;
+          border: 0px solid #000000;
+        }
+        input[type=range]::-webkit-slider-thumb {
+          box-shadow: 0px 0px 0px #000000;
+          border: 0px solid #E3E3E3;
+          height: 30px;
+          width: 14px;
+          border-radius: 0px;
+          background: #FFFFFF;
+          cursor: pointer;
+          -webkit-appearance: none;
+          margin-top: 0px;
+        }
+        input[type=range]:focus::-webkit-slider-runnable-track {
+          background: #000000;
+        }
+        input[type=range]::-moz-range-track {
+          width: 100%;
+          height: 30px;
+          cursor: pointer;
+          animate: 0.2s;
+          box-shadow: 0px 0px 0px #000000;
+          background: #000000;
+          border-radius: 0px;
+          border: 0px solid #000000;
+        }
+        input[type=range]::-moz-range-thumb {
+          box-shadow: 0px 0px 0px #000000;
+          border: 0px solid #E3E3E3;
+          height: 30px;
+          width: 14px;
+          border-radius: 0px;
+          background: #FFFFFF;
+          cursor: pointer;
+        }
+        input[type=range]::-ms-track {
+          width: 100%;
+          height: 30px;
+          cursor: pointer;
+          animate: 0.2s;
+          background: transparent;
+          border-color: transparent;
+          color: transparent;
+        }
+        input[type=range]::-ms-fill-lower {
+          background: #000000;
+          border: 0px solid #000000;
+          border-radius: 0px;
+          box-shadow: 0px 0px 0px #000000;
+        }
+        input[type=range]::-ms-fill-upper {
+          background: #000000;
+          border: 0px solid #000000;
+          border-radius: 0px;
+          box-shadow: 0px 0px 0px #000000;
+        }
+        input[type=range]::-ms-thumb {
+          margin-top: 1px;
+          box-shadow: 0px 0px 0px #000000;
+          border: 0px solid #E3E3E3;
+          height: 30px;
+          width: 14px;
+          border-radius: 0px;
+          background: #FFFFFF;
+          cursor: pointer;
+        }
+        input[type=range]:focus::-ms-fill-lower {
+          background: #000000;
+        }
+        input[type=range]:focus::-ms-fill-upper {
+          background: #000000;
+        }
+
+
+
+        /* 버튼 컨테이너 스타일 추가 */
+        #buttonContainer {
+            position: absolute;
+            bottom: 2vw;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* 버튼 스타일 추가 */
+        .function-button {
+            background: transparent;
+            opacity: 0.1;
+            color: white;
+            top: 92vh;
+            width: 20vw;
+            padding: 10px;
+            border: none;
+            transition: opacity 0.3s;
+            &:hover{
+                opacity: 1;
+            }
+        }
+
+        p{color: white; text-align: center;}
+
+         #equationDisplay {
+            position: absolute;
+            top: 5vh;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            background: black;
+        }
+    </style>
+</head>
+<body>
+    <p>CHOOSE GRAPH & DRAG RANGE BAR</p>
+    <input type="range" id="scaleSlider" value="0">
+    <canvas id="graphCanvas"></canvas>
+    <div id="equationDisplay"></div>
+    <!-- 버튼 컨테이너 추가 -->
+    <div id="buttonContainer">
+        <button class="function-button" id="function1">Graph 1</button>
+        <button class="function-button" id="function2">Graph 2</button>
+        <button class="function-button" id="function3">Graph 3</button>
+        <button class="function-button" id="function4">Graph 4</button>
+        <button class="function-button" id="function5">Graph 5</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('graphCanvas');
+        const context = canvas.getContext('2d');
+        let selectedFunction = 1;
+        let minRange = 1;
+        let maxRange = 1000;
+
+        function drawGraph(func, scale) {
+            const equationDisplay = document.getElementById('equationDisplay');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            context.strokeStyle = 'white';
+            context.lineWidth = 2;
+            context.beginPath();
+
+            if (func === 1) {
+                for (let t = 0.01; t <= 2 * Math.PI; t += 0.01) {           
+                    const r = scale * (Math.tan(35 * t) + 1 / Math.cos(35 * t));
+                    const x = canvas.width / 2 + r * Math.cos(t);
+                    const y = canvas.height / 2 - r * Math.sin(t);
+                    context.lineTo(x, y);
+                }
+            } 
+
+            else if (func === 2) {
+                const xStep = 0.1; // x의 간격
+                const r = scale * 0.1; // 스케일 값에 따라 r 계산
+                for (let x = -3; x <= 3; x += xStep) {
+                    const y = Math.cos(r) * Math.sin(r * x);
+                    const xCoord = canvas.width / 2 + x * scale;
+                    const yCoord = canvas.height / 2 - y * scale;
+                    context.lineTo(xCoord, yCoord);
+                }
+            } 
+
+            else if (func === 3) {
+                const xStep = 0.3; // x의 간격
+                const yStep = 0.3; // y의 간격
+                for (let x = -30; x <= 30; x += xStep) {
+                    for (let y = -30; y <= 30; y += yStep) {
+                        const equationResult = x**2 + y**2 - scale * Math.cos(4 * x);
+                        const xCoord = canvas.width / 2 + x * scale;
+                        const yCoord = canvas.height / 2 - y * scale;
+                        if (equationResult >= -100 && equationResult <= 100) {
+                            context.lineTo(xCoord, yCoord);
+                        }
+                    }
+                }
+            }     
+            else if (func === 4) {
+                const xStep = 0.1; // x의 간격
+                const r = scale * 0.1; // 스케일 값에 따라 r 계산
+                for (let x = -3; x <= 3; x += xStep) {
+                    const y = 2 * Math.sin(r * Math.cos(x));
+                    const xCoord = canvas.width / 2 + x * scale;
+                    const yCoord = canvas.height / 2 - y * scale;
+                        context.lineTo(xCoord, yCoord);
+                    }
+                }
+            else if (func === 5) {
+                const tStep = 0.01; // t의 간격
+                for (let t = 0; t <= 5 * Math.PI; t += tStep) {
+                    const r = Math.tan(2 * t / 5);
+                    const x = r * Math.cos(t);
+                    const y = r * Math.sin(t);
+                    const xCoord = canvas.width / 2 + x * scale;
+                    const yCoord = canvas.height / 2 - y * scale;
+                    context.lineTo(xCoord, yCoord);
+                }
+            }
+            context.stroke();
+        }
+
+        document.getElementById('function1').addEventListener('click', function () {
+            selectedFunction = 1;
+            minRange = 0;
+            maxRange = 1000;
+            const scaleSlider = document.getElementById('scaleSlider');
+            scaleSlider.min = minRange;
+            scaleSlider.max = maxRange;
+            scaleSlider.value = minRange;
+            scaleSlider.step = 0.5;
+            drawGraph(selectedFunction, minRange);
+            canvas.style.display = 'block';
+        });
+
+        document.getElementById('function2').addEventListener('click', function () {
+            selectedFunction = 2;
+            minRange = -250;
+            maxRange = 250;
+            const scaleSlider = document.getElementById('scaleSlider');
+            scaleSlider.min = minRange;
+            scaleSlider.max = maxRange;
+            scaleSlider.value = 0;
+            scaleSlider.step = 0.1;
+            drawGraph(selectedFunction, minRange);
+            canvas.style.display = 'block';
+        });
+
+        document.getElementById('function3').addEventListener('click', function () {
+            selectedFunction = 3;
+            minRange = -90;
+            maxRange = 90;
+            const scaleSlider = document.getElementById('scaleSlider');
+            scaleSlider.min = minRange;
+            scaleSlider.max = maxRange;
+            scaleSlider.value = minRange;
+            scaleSlider.step = 0.1;
+            scaleSlider.value = 0;
+            drawGraph(selectedFunction, minRange);
+            canvas.style.display = 'block';
+        });
+
+        document.getElementById('function4').addEventListener('click', function () {
+            selectedFunction = 4;
+            minRange = -250;
+            maxRange = 250;
+            const scaleSlider = document.getElementById('scaleSlider');
+            scaleSlider.min = minRange;
+            scaleSlider.max = maxRange;
+            scaleSlider.value = minRange;
+            scaleSlider.step = 0.1;
+            scaleSlider.value = 0;
+            drawGraph(selectedFunction, minRange);
+            canvas.style.display = 'block';
+        });
+
+        document.getElementById('function5').addEventListener('click', function () {
+            selectedFunction = 5;
+            minRange = -500;
+            maxRange = 500;
+            const scaleSlider = document.getElementById('scaleSlider');
+            scaleSlider.min = minRange;
+            scaleSlider.max = maxRange;
+            scaleSlider.value = minRange;
+            scaleSlider.step = 0.1;
+            scaleSlider.value = 0;
+            drawGraph(selectedFunction, minRange);
+            canvas.style.display = 'block';
+        });
+
+       const scaleSlider = document.getElementById('scaleSlider');
+            scaleSlider.addEventListener('input', function () {
+                const scale = parseFloat(scaleSlider.value);
+                updateEquation(selectedFunction, scale);
+                drawGraph(selectedFunction, scale);
+            });
+
+
+        function updateEquation(func, scale) {
+        const equationDisplay = document.getElementById('equationDisplay');
+        let equationText = '';
+
+        if (func === 1) {
+            equationText = `r=20(tan(17x${scale})+cos(17x${scale}))`;
+        } else if (func === 2) {
+            equationText = `y=cos(${scale})x(sin(${scale}x)`;
+        } else if (func === 3) {
+            equationText = `x^2+y^2=${scale}cos(4x)`;
+        } else if (func === 4) {
+            equationText = `y=2sin(${scale}cos(x))`;
+        } else if (func === 5) {
+            equationText = `tan(2x${scale}/5)`;
+        }
+
+        equationDisplay.textContent = equationText;
+    }
+    </script>
+</body>
+</html>
